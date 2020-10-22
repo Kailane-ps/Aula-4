@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filmes</title>
+</head>
+<body onload="listar()">
+    
+    <form id="form">
+        <input type="text" id="nome"      placeholder="Nome do filme" required>
+        <input type="text" id="categoria" placeholder="Categoria" required>
+        <input type="text" id="ano"       placeholder="Ano de lançamento" required>
+
+        <button type="button" onclick="cadastrar()" id="btnCadastrar">Cadastrar</button>
+        <button type="button" onclick="remover()"   id="btnRemover">Remover</button>
+
+        <table>
+            <caption>Filmes</caption>
+            <thead>
+                <th>
+                    Id
+                </th>
+
+                <th>
+                    Nome
+                </th>
+
+                <th>
+                    Categoria
+                </th>
+
+                <th>
+                    Ano Lançamento
+                </th>
+
+            </thead>
+            <tbody id="tabela-lista-corpo"></tbody>
+            
+        </table>
+    </form>
+
+</body>
+<script>
+    let url = 'https://5f91b8e2eca67c0016408f90.mockapi.io/api/categorias';
+    let filme = document.querySelector('#filme');
+
+    let filmes = [];
+
+    function listar(){
+        let xhrGet     = new XMLHttpRequest();
+        xhrGet.onload  = listarSucesso;
+        xhrGet.onerror = listarErro;
+        xhrGet.open('GET', url);
+        xhrGet.send();
+    }
+
+    let corpoTabela = document.querySelector('#tabela-lista-corpo')
+    corpoTabela.innerHTML = "";
+
+    //Percorrendo Array
+    filmes.forEach(item =>{
+        linha = document.createElement('tr');
+
+        ColunaNome = document.createElement('td');
+        ColunaNome = innerText = item.nome;
+        linha.appendChild(ColunaNome);
+
+        colunaLancamento = document.createElement('td');
+        colunaLancamento = innerText = item.anoLancamento;
+        linha.appendChild(colunaLancamento);
+
+        colunaCategoria = document.createElement('td');
+        colunaCategoria.innerText = item.anoLancamento;
+        linha.appendChild(colunaLancamento);
+
+        corpoTabela.appendChild(linha);
+    });
+
+    function listarSucesso(){
+        console.log('Sucesso');
+        const data =  this.responseText;
+        console.log(JSON.parse(data));
+        console.log(filmes);
+
+    }
+
+    function listarErro(err){
+        console.error(err);
+    }
+
+    function cadastrar(){
+        event.preventDefault();
+
+        let xhrPost = new XMLHttpRequest();
+        xhrPost.onload = cadastroSucesso;
+        xhrPost.onerror = cadastroErro;
+        xhrPost.open('POST', url);
+        xhrPost.setRequestHeader('content-type' , 'application/json');
+        
+        let params = {
+            nome : document.querySelector('#nome').value,
+            anoLancamento : document.querySelector('#anoLancamento').value,
+            categoria : document.querySelector('#categoria').value
+        }
+
+        xhrPost.send(JSON.stringify(params));
+    }
+
+    function cadastroSucesso(){
+        console.log('Sucesso');
+        console.log(this.status);
+        console.log(JSON.parse(this.responseText));
+
+        listar();
+    }
+
+    function cadastroErro(){
+        console.log('Erro ' + err);
+    }
+
+    function remover(){
+        let xhrDelete = new XMLHttpRequest();
+        xhrDelete.onload = removeSucesso;
+        xhrDelete.onerror = removeErro;
+        xhrDelete.open('DELETE', url + '/' + categoria.value);
+        xhrDelete.send();
+    }
+
+    function removeSucesso(){
+        console.log('Sucesso');
+        console.log(this.status);
+        console.log(JSON.parse(this.responseText));
+
+        listar();
+    }
+
+    function removeErro(){
+        console.log('Erro ' + err);
+    }
+
+</script>
+</html>
